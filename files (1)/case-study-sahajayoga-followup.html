@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Case Study — Sahaja Yoga Seeker Follow-up App | abhi.dev</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0B0C14;
+      --navy2:   #12131F;
+      --navy3:   #191B2A;
+      --cream:   #ECEBF3;
+      --cream2:  #B9B7C9;
+      --saffron: #C7F135;
+      --saffron2:#C7F135;
+      --steel:   #9694A8;
+      --white:   #FFFFFF;
+      --green:   #34C78A;
+      --red:     #E05555;
+      --accent:  #6C5CE7;
+      --accent-lt:#8B7CF0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(11,12,20,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(150,148,168,0.12);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px; color: var(--cream);
+      text-decoration: none; letter-spacing: 0.02em;
+    }
+    .nav-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--steel); letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 60% 40%, rgba(199,241,53,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 20% 80%, rgba(52,199,138,0.05) 0%, transparent 60%);
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--saffron); margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 900; line-height: 1.05;
+      color: var(--white); max-width: 800px;
+      margin-bottom: 28px;
+    }
+    .hero-title em {
+      font-style: italic; color: var(--saffron2);
+    }
+    .hero-sub {
+      font-size: 18px; color: var(--steel);
+      max-width: 540px; line-height: 1.6;
+      margin-bottom: 48px;
+    }
+    .hero-pills {
+      display: flex; flex-wrap: wrap; gap: 10px;
+    }
+    .pill {
+      padding: 7px 16px; border-radius: 100px;
+      border: 1px solid rgba(150,148,168,0.3);
+      font-size: 12px; color: var(--steel); letter-spacing: 0.05em;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 100px 48px; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--saffron); margin-bottom: 16px;
+    }
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 700; color: var(--white);
+      line-height: 1.15; margin-bottom: 24px;
+    }
+    p { color: var(--cream2); font-size: 16px; line-height: 1.8; margin-bottom: 16px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── DIVIDER ── */
+    .rule { border: none; border-top: 1px solid rgba(150,148,168,0.12); margin: 0 48px; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--navy2);
+      border-top: 1px solid rgba(150,148,168,0.1);
+      border-bottom: 1px solid rgba(150,148,168,0.1);
+      padding: 56px 48px;
+    }
+    .stats-grid {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 900; color: var(--saffron2);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 13px; color: var(--steel); margin-top: 8px; letter-spacing: 0.04em;
+    }
+
+    /* ── TWO-COL ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .two-col.flip { direction: rtl; }
+    .two-col.flip > * { direction: ltr; }
+
+    /* ── CHALLENGE BOX ── */
+    .challenge-list { list-style: none; margin-top: 24px; }
+    .challenge-list li {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px solid rgba(150,148,168,0.1);
+      color: var(--cream2); font-size: 15px;
+    }
+    .challenge-list li:last-child { border-bottom: none; }
+    .challenge-list .icon {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: rgba(199,241,53,0.15); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .challenge-list .icon svg { width: 12px; height: 12px; }
+
+    /* ── TECH STACK ── */
+    .stack-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px;
+    }
+    .stack-card {
+      background: var(--navy2);
+      border: 1px solid rgba(150,148,168,0.12);
+      border-radius: 12px; padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .stack-card:hover { border-color: rgba(199,241,53,0.4); }
+    .stack-card-label {
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--steel); margin-bottom: 6px;
+    }
+    .stack-card-name {
+      font-size: 15px; font-weight: 600; color: var(--white);
+    }
+    .stack-card-desc {
+      font-size: 12px; color: var(--steel); margin-top: 4px; line-height: 1.5;
+    }
+
+    /* ── ROLE MATRIX (SIGNATURE ELEMENT) ── */
+    .matrix-section { background: var(--navy2); }
+    .matrix-wrap {
+      overflow-x: auto; margin-top: 40px;
+      border: 1px solid rgba(150,148,168,0.12); border-radius: 16px;
+    }
+    table.matrix {
+      width: 100%; border-collapse: collapse; min-width: 720px;
+    }
+    .matrix thead tr th {
+      padding: 14px 12px;
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--steel); font-weight: 500;
+      border-bottom: 1px solid rgba(150,148,168,0.12);
+      text-align: center;
+    }
+    .matrix thead tr th:first-child { text-align: left; padding-left: 20px; }
+    .matrix tbody tr { transition: background 0.15s; }
+    .matrix tbody tr:hover { background: rgba(199,241,53,0.04); }
+    .matrix tbody tr td {
+      padding: 13px 12px;
+      border-bottom: 1px solid rgba(150,148,168,0.07);
+      text-align: center; vertical-align: middle;
+    }
+    .matrix tbody tr:last-child td { border-bottom: none; }
+    .matrix tbody tr td:first-child {
+      text-align: left; padding-left: 20px;
+      font-size: 13px; color: var(--cream); font-weight: 500;
+    }
+    .dot-yes {
+      display: inline-block; width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(52,199,138,0.2); border: 1.5px solid var(--green);
+      position: relative;
+    }
+    .dot-yes::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+    }
+    .dot-no {
+      display: inline-block; width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(255,255,255,0.03); border: 1.5px solid rgba(150,148,168,0.2);
+    }
+    .dot-partial {
+      display: inline-block; width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(199,241,53,0.15); border: 1.5px solid var(--saffron);
+      position: relative;
+    }
+    .dot-partial::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 8px; height: 3px; border-radius: 2px; background: var(--saffron);
+    }
+    .matrix-legend {
+      display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--steel); }
+
+    /* ── FEATURE CARDS ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 32px;
+    }
+    .feature-card {
+      background: var(--navy2); border: 1px solid rgba(150,148,168,0.12);
+      border-radius: 14px; padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(199,241,53,0.35); transform: translateY(-2px); }
+    .feature-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(199,241,53,0.12); display: flex; align-items: center;
+      justify-content: center; margin-bottom: 16px;
+      font-size: 18px;
+    }
+    .feature-title { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px; }
+    .feature-desc  { font-size: 13px; color: var(--steel); line-height: 1.6; }
+
+    /* ── OUTCOME CALLOUT ── */
+    .outcome-box {
+      background: linear-gradient(135deg, rgba(199,241,53,0.1) 0%, rgba(199,241,53,0.03) 100%);
+      border: 1px solid rgba(199,241,53,0.25); border-radius: 20px;
+      padding: 48px; margin-top: 40px;
+    }
+    .outcome-quote {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(22px, 3vw, 32px); font-style: italic;
+      color: var(--white); line-height: 1.4; margin-bottom: 20px;
+    }
+    .outcome-attr { font-size: 13px; color: var(--steel); }
+
+    /* ── OUTCOME GRID ── */
+    .outcome-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px;
+    }
+    .outcome-card {
+      background: var(--navy2); border: 1px solid rgba(150,148,168,0.12);
+      border-radius: 14px; padding: 28px 24px; text-align: center;
+    }
+    .outcome-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px; font-weight: 900; color: var(--green); line-height: 1;
+    }
+    .outcome-desc { font-size: 13px; color: var(--steel); margin-top: 8px; line-height: 1.5; }
+
+    /* ── TIMELINE ── */
+    .timeline { margin-top: 40px; }
+    .tl-item { display: flex; gap: 24px; padding-bottom: 40px; position: relative; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; }
+    .tl-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--saffron); border: 2px solid var(--navy);
+      box-shadow: 0 0 0 3px rgba(199,241,53,0.25); flex-shrink: 0;
+    }
+    .tl-line { flex: 1; width: 1px; background: rgba(150,148,168,0.2); margin-top: 4px; }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-phase { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--saffron); margin-bottom: 4px; }
+    .tl-title { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+    .tl-desc { font-size: 14px; color: var(--steel); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center; padding: 120px 48px;
+      background: linear-gradient(to bottom, var(--navy), var(--navy2));
+    }
+    .cta-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(32px, 5vw, 60px); font-weight: 900; color: var(--white);
+      margin-bottom: 16px; line-height: 1.1;
+    }
+    .cta-sub { font-size: 17px; color: var(--steel); margin-bottom: 40px; }
+    .cta-btn {
+      display: inline-block; padding: 16px 40px; border-radius: 100px;
+      background: var(--accent); color: #fff;
+      font-weight: 600; font-size: 15px; text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .cta-btn:hover { background: var(--accent-lt); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 32px 48px;
+      border-top: 1px solid rgba(150,148,168,0.1);
+      font-size: 13px; color: var(--steel);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      section { padding: 72px 24px; }
+      .hero { padding: 0 24px 64px; }
+      .rule { margin: 0 24px; }
+      .stats-bar { padding: 48px 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+      .two-col { grid-template-columns: 1fr; gap: 40px; }
+      .two-col.flip { direction: ltr; }
+      .stack-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: 1fr; }
+      .outcome-grid { grid-template-columns: 1fr; }
+      .cta-section { padding: 80px 24px; }
+      footer { padding: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">abhi.dev</a>
+  <a class="nav-tag" href="index.html#work" style="text-decoration:none;">← Back to portfolio</a>
+</nav>
+
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <p class="hero-eyebrow">Case Study &nbsp;·&nbsp; Mobile + Backend</p>
+  <h1 class="hero-title">Turning a spreadsheet into a <em>living system</em> for 10 user roles</h1>
+  <p class="hero-sub">A full-stack seeker follow-up platform built for Sahaja Yoga — from first contact to long-term mentoring, tracked in real time.</p>
+  <div class="hero-pills">
+    <span class="pill">React Native / Expo</span>
+    <span class="pill">Laravel 11</span>
+    <span class="pill">MySQL</span>
+    <span class="pill">REST API</span>
+    <span class="pill">Role-Based Access</span>
+    <span class="pill">Offline-Friendly</span>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div>
+      <div class="stat-num">10</div>
+      <div class="stat-label">Distinct User Roles</div>
+    </div>
+    <div>
+      <div class="stat-num">6</div>
+      <div class="stat-label">Seeker Journey Stages</div>
+    </div>
+    <div>
+      <div class="stat-num">4</div>
+      <div class="stat-label">Screens Built</div>
+    </div>
+    <div>
+      <div class="stat-num">0</div>
+      <div class="stat-label">Data Leaks Across Roles</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CONTEXT -->
+<section>
+  <div class="section-inner two-col">
+    <div>
+      <p class="eyebrow">The Organisation</p>
+      <h2>A grassroots community with a complex coordination problem</h2>
+    </div>
+    <div>
+      <p>Sahaja Yoga Pune runs regular public programmes and Pratishthan sessions that attract new seekers — people who attend an introductory event and express interest in learning more.</p>
+      <p>Before this app, the entire follow-up process lived in WhatsApp groups and shared spreadsheets. Volunteers had no clear view of who had been called, who had been assigned a mentor, or where any individual was in their journey.</p>
+      <p>The ask was simple in concept but complex in execution: build a system every volunteer could use on their phone, with each role seeing exactly what they needed — and nothing more.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- CHALLENGE -->
+<section>
+  <div class="section-inner">
+    <p class="eyebrow">The Challenge</p>
+    <h2>Eight problems to solve before writing a line of code</h2>
+    <ul class="challenge-list">
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>10 user roles with different data visibility — admin down to individual callers — with no overlap in what each sees by default</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>A seeker journey with 6 distinct statuses that must advance automatically based on volunteer actions, not manual updates</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>A dual seeker type (Pratishthan vs. Public Programme) with completely different checklist fields, session tracking, and assignment workflows</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Volunteers needed fast search across thousands of records without triggering role-restricted filters designed for normal browsing</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Bulk seeker assignment to callers and mentors — across hundreds of records — with a single tap from a coordinator's device</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>The "My Seekers" screen needed to persist history — a caller who is later demoted should still see their full past assignment list</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Zonal isolation — each Zonal Leader should only ever see seekers from their own zone, even on search</span>
+      </li>
+      <li>
+        <span class="icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#C7F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Existing screens for other roles were live in production — any backend change to the main <code style="font-size:12px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 5px;border-radius:4px">/seekers</code> route risked breaking them</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ROLE MATRIX -->
+<section class="matrix-section">
+  <div class="section-inner">
+    <p class="eyebrow">Architecture</p>
+    <h2>Who sees what — the permission matrix</h2>
+    <p>Every screen, filter, and API route was designed around this matrix. Rather than a single switch statement that grew over time, each role's logic lives in a dedicated branch, making future changes safe and isolated.</p>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>All Seekers</th>
+            <th>Zone Filter</th>
+            <th>My Seekers</th>
+            <th>Assign</th>
+            <th>Mark Called</th>
+            <th>Mentoring</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Admin</td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+          </tr>
+          <tr>
+            <td>CCT Coordinator</td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+          </tr>
+          <tr>
+            <td>Zonal Coordinator</td>
+            <td><span class="dot-partial"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-partial"></span></td>
+          </tr>
+          <tr>
+            <td>Zonal Mentoring Team</td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-partial"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+          </tr>
+          <tr>
+            <td>Zonal Yuvaskati</td>
+            <td><span class="dot-partial"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+          </tr>
+          <tr>
+            <td>CCT Member</td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+          </tr>
+          <tr>
+            <td>Pratishthan Session Yuva</td>
+            <td><span class="dot-partial"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+          </tr>
+          <tr>
+            <td>Pratishthan Calling Team</td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+          </tr>
+          <tr>
+            <td>SCT Coordinator</td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-yes"></span></td>
+            <td><span class="dot-no"></span></td>
+            <td><span class="dot-no"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="matrix-legend">
+      <div class="legend-item"><span class="dot-yes"></span> Full access</div>
+      <div class="legend-item"><span class="dot-partial"></span> Scoped / conditional</div>
+      <div class="legend-item"><span class="dot-no"></span> No access</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TECH STACK -->
+<section>
+  <div class="section-inner">
+    <p class="eyebrow">Technology</p>
+    <h2>Chosen for the team, not the CV</h2>
+    <p>Every technology choice was made with the organisation's volunteer maintainers in mind — widely-documented, stable, and able to run on affordable shared hosting.</p>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-card-label">Frontend</div>
+        <div class="stack-card-name">React Native + Expo</div>
+        <div class="stack-card-desc">Single codebase for iOS and Android. OTA updates without App Store delays.</div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-card-label">Backend</div>
+        <div class="stack-card-name">Laravel 11</div>
+        <div class="stack-card-desc">Eloquent ORM for complex relational queries. Sanctum for token auth. Built-in pagination.</div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-card-label">Database</div>
+        <div class="stack-card-name">MySQL</div>
+        <div class="stack-card-desc">Relational structure for seekers, checklists, zones, areas, and role assignments.</div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-card-label">Navigation</div>
+        <div class="stack-card-name">Expo Router</div>
+        <div class="stack-card-desc">File-based routing with deep link support for direct seeker record access.</div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-card-label">Auth</div>
+        <div class="stack-card-name">Laravel Sanctum</div>
+        <div class="stack-card-desc">Token-based mobile auth. Role and zone context embedded in every request.</div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-card-label">State</div>
+        <div class="stack-card-name">React Context + Hooks</div>
+        <div class="stack-card-desc">Auth context, debounced search, and focus-driven re-fetch — no external state library needed.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- KEY DECISIONS -->
+<section>
+  <div class="section-inner">
+    <p class="eyebrow">Engineering Decisions</p>
+    <h2>The choices that shaped the system</h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔀</div>
+        <div class="feature-title">Separate route for "All Seekers"</div>
+        <div class="feature-desc">Rather than adding a flag to the existing <code style="font-size:11px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 4px;border-radius:3px">/seekers</code> route and risking regressions across live screens, a new <code style="font-size:11px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 4px;border-radius:3px">/seekers/all</code> endpoint was created with clean, role-aware logic from scratch.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Search bypasses role filters</div>
+        <div class="feature-desc">An <code style="font-size:11px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 4px;border-radius:3px">$isSearching</code> flag on the backend detects when a name, mobile, or date is in the request and skips status-based role gates — letting coordinators find any seeker instantly while preserving the default scoped view.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">My Seekers shows full history</div>
+        <div class="feature-desc">The <code style="font-size:11px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 4px;border-radius:3px">my_seekers=1</code> flag returns every seeker ever linked to the user as caller or mentor — regardless of current status — so no assignment is ever lost from view even as seekers progress through stages.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Debounced search on device</div>
+        <div class="feature-desc">A 500ms debounce hook prevents an API call on every keystroke. Combined with paginated responses (20 per page) and cursor-based load-more, the list stays fast even on a slow mobile connection.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Status advances automatically</div>
+        <div class="feature-desc">When a CCT coordinator assigns a caller, the seeker's status moves from 0 → 1. When a call is logged as completed, it moves to 2. When a mentor is assigned by a Zonal Leader, it moves to 3. No manual status field for volunteers to forget.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <div class="feature-title">Checklist lives in its own table</div>
+        <div class="feature-desc">Session attendance, monthly follow-ups, and activity flags are stored in a dedicated <code style="font-size:11px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 4px;border-radius:3px">seeker_checklists</code> table, keeping the seekers table clean and allowing filtered queries via <code style="font-size:11px;color:var(--saffron2);background:rgba(199,241,53,0.1);padding:1px 4px;border-radius:3px">whereHas</code> without joins.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TIMELINE -->
+<section style="background: var(--navy2);">
+  <div class="section-inner">
+    <p class="eyebrow">Build Process</p>
+    <h2>How it came together</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div>
+          <div class="tl-phase">Discovery</div>
+          <div class="tl-title">Mapping the volunteer journey</div>
+          <div class="tl-desc">Workshops with coordinators, callers, and zonal leaders to understand exactly what each role needed to see — and what would slow them down if they saw too much.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div>
+          <div class="tl-phase">Backend First</div>
+          <div class="tl-title">Schema and API design</div>
+          <div class="tl-desc">Database schema, migrations, and all REST endpoints designed and tested in isolation before any mobile screen was built. Role-based filtering was validated with real data from day one.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div>
+          <div class="tl-phase">Core Screens</div>
+          <div class="tl-title">Seeker list, detail, and assignment</div>
+          <div class="tl-desc">The three highest-traffic screens — list, detail view, and bulk assignment — were built and refined with volunteers testing on real devices before moving to secondary screens.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div>
+          <div class="tl-phase">Iteration</div>
+          <div class="tl-title">Filter redesign and UX polish</div>
+          <div class="tl-desc">Original filter modal used chip-based multi-selects that confused volunteers. Replaced with toggle buttons, dot selectors, and an active-filter count badge — reducing support queries significantly.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div>
+          <div class="tl-phase">Production</div>
+          <div class="tl-title">Rollout and handover</div>
+          <div class="tl-desc">Phased rollout starting with CCT coordinators, then expanding to all roles with documentation and a walkthrough session. Zero downtime migration from the existing spreadsheet system.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- OUTCOMES -->
+<section>
+  <div class="section-inner">
+    <p class="eyebrow">Outcomes</p>
+    <h2>What changed after launch</h2>
+
+    <div class="outcome-grid">
+      <div class="outcome-card">
+        <div class="outcome-num">100%</div>
+        <div class="outcome-desc">Of seeker assignments now tracked digitally — zero spreadsheet dependency</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-num">~0</div>
+        <div class="outcome-desc">Support requests about "wrong data showing" — role isolation works as designed</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-num">10×</div>
+        <div class="outcome-desc">Faster bulk assignment — what took 20 minutes in WhatsApp now takes under 2</div>
+      </div>
+    </div>
+
+    <div class="outcome-box">
+      <p class="outcome-quote">"Before this, we were managing 300+ seekers across 12 WhatsApp groups. Now every coordinator logs in and sees exactly their work. Nothing more, nothing less."</p>
+      <p class="outcome-attr">— Programme Coordinator, Sahaja Yoga Pune</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Have a coordination problem<br/>that's outgrown a spreadsheet?</h2>
+  <p class="cta-sub">Let's talk about what a purpose-built system could look like for your team.</p>
+  <a class="cta-btn" href="mailto:abhimanyu.naikare@gmail.com">Get in touch</a>
+</section>
+
+<footer>
+  &copy; <span id="csYear"></span> &nbsp;·&nbsp; Built with React Native, Expo &amp; Laravel &nbsp;·&nbsp; All client data anonymised
+</footer>
+<script>document.getElementById('csYear').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>

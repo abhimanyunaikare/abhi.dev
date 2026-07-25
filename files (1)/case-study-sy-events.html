@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Case Study — Sahaja Yoga Events Platform | abhi.dev</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --indigo:    #0B0C14;
+    --indigo-mid:#12131F;
+    --violet:    #6C5CE7;
+    --violet-lt: #8B7CF0;
+    --gold:      #C7F135;
+    --gold-lt:   #D9F76B;
+    --cream:     #0B0C14;
+    --ink:       #ECEBF3;
+    --muted:     #9694A8;
+    --border:    rgba(255,255,255,0.1);
+    --white:     #191B2A;
+    --panel:     #12131F;
+    --panel2:    #191B2A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HERO ───────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(160deg, var(--indigo) 0%, var(--indigo-mid) 55%, #8B7CF0 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(199,241,53,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 20%, rgba(108,92,231,0.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-lotus {
+    font-size: 56px;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 0 30px rgba(199,241,53,0.5));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-lt);
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+
+  .hero-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    max-width: 800px;
+    margin-bottom: 24px;
+  }
+
+  .hero-title em {
+    font-style: normal;
+    color: var(--gold-lt);
+  }
+
+  .hero-sub {
+    font-size: clamp(15px, 2vw, 18px);
+    color: rgba(255,255,255,0.7);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--gold-lt);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 48px;
+    background: rgba(255,255,255,0.15);
+    align-self: center;
+  }
+
+  /* ── LAYOUT ─────────────────────────────────────────────── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .section {
+    padding: 96px 0;
+  }
+
+  .section-alt {
+    background: var(--panel);
+  }
+
+  .section-dark {
+    background: var(--indigo);
+    color: #fff;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-dark .eyebrow { color: var(--gold-lt); }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .section-body {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 640px;
+    line-height: 1.75;
+  }
+
+  .section-dark .section-body { color: rgba(255,255,255,0.65); }
+
+  /* ── OVERVIEW GRID ──────────────────────────────────────── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 56px;
+  }
+
+  .overview-cell {
+    background: var(--panel);
+    padding: 32px;
+  }
+
+  .overview-cell:first-child {
+    grid-column: span 2;
+    background: var(--indigo);
+    color: #fff;
+  }
+
+  .overview-label {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .overview-cell:first-child .overview-label { color: rgba(255,255,255,0.45); }
+
+  .overview-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .overview-cell:first-child .overview-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    color: #fff;
+  }
+
+  /* ── PROBLEM / BEFORE ───────────────────────────────────── */
+  .chaos-list {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .chaos-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .chaos-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .chaos-text strong {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .chaos-text p {
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  /* ── SIGNATURE TIMELINE ─────────────────────────────────── */
+  /* This is the unique element — a lotus-petal timeline */
+  .timeline {
+    margin-top: 64px;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--violet), var(--gold));
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 32px;
+    padding-bottom: 48px;
+    position: relative;
+  }
+
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-dot {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--violet), var(--indigo));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 0 4px var(--cream), 0 0 0 6px rgba(108,92,231,0.2);
+  }
+
+  .timeline-content {
+    padding-top: 10px;
+    flex: 1;
+  }
+
+  .timeline-phase {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 4px;
+  }
+
+  .timeline-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .timeline-body {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .timeline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .tag {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(108,92,231,0.07);
+    color: var(--violet);
+    border: 1px solid rgba(108,92,231,0.15);
+    border-radius: 6px;
+    padding: 3px 10px;
+  }
+
+  /* ── FEATURES GRID ──────────────────────────────────────── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 56px;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 28px 24px;
+    transition: background 0.2s;
+  }
+
+  .feature-card:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .feature-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .feature-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .feature-body {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  /* ── TECH STACK ─────────────────────────────────────────── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 48px;
+  }
+
+  .stack-pill {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .stack-pill:hover {
+    border-color: var(--violet-lt);
+    box-shadow: 0 4px 20px rgba(108,92,231,0.08);
+  }
+
+  .stack-icon { font-size: 28px; margin-bottom: 8px; }
+  .stack-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .stack-role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── ROLE MATRIX ────────────────────────────────────────── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+  }
+
+  .role-card {
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid var(--border);
+  }
+
+  .role-card.admin    { background: linear-gradient(135deg, #6C5CE7 0%, #4A3FAE 100%); color: #fff; border-color: transparent; }
+  .role-card.organizer { background: rgba(108,92,231,0.08); }
+  .role-card.seva     { background: rgba(52,199,138,0.08); }
+  .role-card.accounts { background: rgba(240,203,58,0.08); }
+
+  .role-name {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .role-card.admin .role-name { color: var(--gold-lt); }
+  .role-card.organizer .role-name { color: var(--violet-lt); }
+  .role-card.seva .role-name { color: #34C78A; }
+  .role-card.accounts .role-name { color: #F0CB3A; }
+
+  .role-perms {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .role-perms li {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.85;
+  }
+
+  .role-card.admin .role-perms li { color: rgba(255,255,255,0.8); }
+
+  .perm-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .role-card.admin .perm-dot     { background: var(--gold-lt); }
+  .role-card.organizer .perm-dot { background: var(--violet-lt); }
+  .role-card.seva .perm-dot      { background: #34C78A; }
+  .role-card.accounts .perm-dot  { background: #F0CB3A; }
+
+  /* ── OUTCOME NUMBERS ────────────────────────────────────── */
+  .outcomes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 56px;
+    border: 1px solid var(--border);
+  }
+
+  .outcome-cell {
+    background: var(--panel);
+    padding: 40px 32px;
+    text-align: center;
+  }
+
+  .outcome-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--violet);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .outcome-label {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── QUOTE ──────────────────────────────────────────────── */
+  .quote-section {
+    background: linear-gradient(135deg, var(--indigo) 0%, #8B7CF0 100%);
+    padding: 96px 24px;
+    text-align: center;
+  }
+
+  /* ── NAV ────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(11,12,20,0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 18px; color: var(--ink);
+    text-decoration: none; letter-spacing: 0.02em;
+  }
+  .nav-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted); letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .hero { padding-top: 90px; }
+
+  .quote-lotus {
+    font-size: 40px;
+    margin-bottom: 32px;
+    filter: drop-shadow(0 0 20px rgba(199,241,53,0.4));
+  }
+
+  .quote-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 3.5vw, 36px);
+    font-weight: 400;
+    font-style: italic;
+    color: #fff;
+    max-width: 720px;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+  }
+
+  .quote-attr {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── CTA ────────────────────────────────────────────────── */
+  .cta-section {
+    padding: 96px 24px;
+    text-align: center;
+    background: var(--cream);
+  }
+
+  .cta-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 16px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-sub {
+    font-size: 17px;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 100%);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px 36px;
+    border-radius: 100px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 32px rgba(108,92,231,0.3);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(108,92,231,0.4);
+  }
+
+  .cta-tags {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+
+  .cta-tag {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .cta-tag::before { content: '✓'; color: var(--violet); font-weight: 700; }
+
+  /* ── FOOTER ─────────────────────────────────────────────── */
+  footer {
+    background: var(--indigo);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 13px;
+  }
+
+  footer span { color: var(--gold-lt); }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .overview-grid { grid-template-columns: 1fr; }
+    .overview-cell:first-child { grid-column: span 1; }
+    .features-grid { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: repeat(2, 1fr); }
+    .role-grid { grid-template-columns: 1fr; }
+    .outcomes { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; }
+    .hero-divider { display: none; }
+    .timeline::before { left: 24px; }
+    .timeline-dot { width: 48px; height: 48px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">abhi.dev</a>
+  <a class="nav-tag" href="index.html#work">← Back to portfolio</a>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-lotus">🪷</div>
+  <div class="hero-eyebrow">Case Study · Full-Stack Web Application</div>
+  <h1 class="hero-title">From WhatsApp chaos<br/>to <em>dignified digital</em> registration</h1>
+  <p class="hero-sub">A complete event ticketing and attendance management platform built for a national spiritual organisation — replacing manual coordination with a seamless, multilingual, mobile-first system.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">1000+</div>
+      <div class="hero-stat-label">Members per event</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">9</div>
+      <div class="hero-stat-label">Indian languages</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">₹0</div>
+      <div class="hero-stat-label">Monthly infra cost</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">5</div>
+      <div class="hero-stat-label">User roles</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROJECT OVERVIEW ──────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">Project Overview</span>
+    <h2 class="section-title">Sahaja Yoga Events Platform</h2>
+    <p class="section-body">A purpose-built ticketing and coupon management system for Sahaja Yoga — a spiritual organisation holding monthly programmes, pujas and workshops across India with hundreds to thousands of attendees.</p>
+
+    <div class="overview-grid">
+      <div class="overview-cell">
+        <div class="overview-label">The Brief</div>
+        <div class="overview-value">"We need members to register digitally, pay online, receive a QR coupon, and be checked in at the gate — with organisers able to manage everything from their phones."</div>
+      </div>
+      <div class="overview-cell">
+        <div class="overview-label">Client</div>
+        <div class="overview-value">Sahaja Yoga Organisation, Pune</div>
+      </div>
+      <div class="overview-cell">
+        <div class="overview-label">Timeline</div>
+        <div class="overview-value">3 months · Ongoing</div>
+      </div>
+      <div class="overview-cell">
+        <div class="overview-label">My Role</div>
+        <div class="overview-value">Solo full-stack developer — architecture, design, build, deployment</div>
+      </div>
+      <div class="overview-cell">
+        <div class="overview-label">Platform</div>
+        <div class="overview-value">Web (mobile-first, works on any device with no app install)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE PROBLEM ───────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <span class="eyebrow">The Problem</span>
+    <h2 class="section-title">Registration was running on goodwill and group chats</h2>
+    <p class="section-body">Before this platform, every event was a coordination nightmare handled entirely through WhatsApp groups, paper registers, and manual payment collection at the gate.</p>
+
+    <div class="chaos-list">
+      <div class="chaos-item">
+        <div class="chaos-icon">📱</div>
+        <div class="chaos-text">
+          <strong>WhatsApp flooding</strong>
+          <p>Members sent names and payment screenshots to group chats. Coordinators manually tracked each one in Excel sheets, prone to duplicates and missed entries.</p>
+        </div>
+      </div>
+      <div class="chaos-item">
+        <div class="chaos-icon">💸</div>
+        <div class="chaos-text">
+          <strong>Cash-only payments with no records</strong>
+          <p>No digital payment trail, no receipt, no way for accounts team to reconcile collections after the event. Donations were especially hard to track.</p>
+        </div>
+      </div>
+      <div class="chaos-item">
+        <div class="chaos-icon">🚪</div>
+        <div class="chaos-text">
+          <strong>Gate chaos on event day</strong>
+          <p>Check-in volunteers had printed name lists. Searching for a name under crowd pressure, marking it off with a pen, handling last-minute registrations — every event was stressful.</p>
+        </div>
+      </div>
+      <div class="chaos-item">
+        <div class="chaos-icon">📊</div>
+        <div class="chaos-text">
+          <strong>Zero post-event data</strong>
+          <p>No visibility into attendance by age, gender, or city. No way to know who volunteered, what people's professions were, or how many first-time seekers attended.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BUILD TIMELINE ────────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">How It Was Built</span>
+    <h2 class="section-title">Eight modules, built in sequence</h2>
+    <p class="section-body">Each phase delivered working, usable functionality — not just code. The client could test and give feedback at every stage.</p>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🏗️</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 1</div>
+          <div class="timeline-title">Foundation & Database Design</div>
+          <div class="timeline-body">Designed a PostgreSQL schema covering events, ticket tiers, members, families, volunteers, donations, OTP codes, and zone options. Built role-based JWT authentication for five distinct user types. Deployed on Supabase with pooler connections for reliability.</div>
+          <div class="timeline-tags">
+            <span class="tag">PostgreSQL</span><span class="tag">Supabase</span><span class="tag">JWT Auth</span><span class="tag">Node.js</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🎟️</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 2</div>
+          <div class="timeline-title">Coupon Booking & Payment</div>
+          <div class="timeline-body">Built the complete booking flow: age-based automatic pricing (Child / Yuva / Adult), sex-based differential rates, discount codes, Razorpay UPI/card/wallet integration, and instant QR coupon generation. Free children get no QR — just a confirmed entry. Donation step built in before payment.</div>
+          <div class="timeline-tags">
+            <span class="tag">Razorpay</span><span class="tag">QR Generation</span><span class="tag">Dynamic Pricing</span><span class="tag">Discount Codes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">📲</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 3</div>
+          <div class="timeline-title">OTP Login & Member Accounts</div>
+          <div class="timeline-body">Members log in via mobile OTP using MSG91. First-time users set up a profile capturing name, sex, date of birth (auto-calculates age category), city/zone, profession, and seva interests. Family members can be added and saved for one-click booking at future events.</div>
+          <div class="timeline-tags">
+            <span class="tag">MSG91 OTP</span><span class="tag">Family Profiles</span><span class="tag">DOB auto-age</span><span class="tag">Profession field</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">📷</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 4</div>
+          <div class="timeline-title">Mobile Check-in Scanner</div>
+          <div class="timeline-body">Check-in seva volunteers open a web page on their phone — no app install needed. Camera opens, QR is scanned, result shows green (admitted) or red (already checked in). Manual search by name, phone, or email with a one-tap check-in button for when QR can't be scanned.</div>
+          <div class="timeline-tags">
+            <span class="tag">HTML5 Camera</span><span class="tag">Real-time</span><span class="tag">One-time entry</span><span class="tag">Manual fallback</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">📊</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 5</div>
+          <div class="timeline-title">Organiser Dashboard & Accounts</div>
+          <div class="timeline-body">Organisers see live stats per event — registered, checked in, remaining. Accounts team gets a separate login with full financial breakdown: ticket revenue, donations, discount impact, Razorpay transaction IDs, year-wise comparison, and grouped booking view for multi-member payments.</div>
+          <div class="timeline-tags">
+            <span class="tag">Role-based views</span><span class="tag">CSV export</span><span class="tag">PDF print</span><span class="tag">Year comparison</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🙌</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 6</div>
+          <div class="timeline-title">Volunteer & Seva Directory</div>
+          <div class="timeline-body">Every member and family member can declare seva interests (photography, gardening, web development, prasad distribution, etc.) and profession. Admin sees a searchable directory filterable by interest, profession, age category, and city — with CSV export for planning seva teams.</div>
+          <div class="timeline-tags">
+            <span class="tag">Volunteer profiles</span><span class="tag">Multi-filter</span><span class="tag">Admin-only</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">⚙️</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 7</div>
+          <div class="timeline-title">Admin Settings & Configuration</div>
+          <div class="timeline-body">Organisers manage event zones/cities and seva interest options through a settings panel — add, edit, hide, or delete without touching code. Zone picker on registration forms is a searchable autocomplete populated from this list.</div>
+          <div class="timeline-tags">
+            <span class="tag">Dynamic config</span><span class="tag">No-code admin</span><span class="tag">Searchable zones</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🚀</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 8</div>
+          <div class="timeline-title">Deployment & Cost Optimisation</div>
+          <div class="timeline-body">Frontend on Vercel (free), backend on Render (free tier), database on Supabase (free). Total monthly infrastructure cost: ₹0. A keep-alive cron job prevents Render cold starts. Custom domain support configured. Ready to migrate to VPS when scale demands it.</div>
+          <div class="timeline-tags">
+            <span class="tag">Vercel</span><span class="tag">Render</span><span class="tag">Supabase</span><span class="tag">₹0/month</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ───────────────────────────────────────────────── -->
+<section class="section section-dark">
+  <div class="container">
+    <span class="eyebrow">What Was Built</span>
+    <h2 class="section-title" style="color:white">A complete platform, not just a booking form</h2>
+    <p class="section-body">Every feature was shaped by how Sahaja Yoga events actually run — not by generic ticketing platform templates.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🪷</div>
+        <div class="feature-title">Spiritually-aware UX</div>
+        <div class="feature-body">Language uses "programme" not "event", "member" not "user", "coupon" not "ticket", "dana" alongside donation. Auspicious preset amounts (₹51, ₹101, ₹251, ₹501).</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👨‍👩‍👧</div>
+        <div class="feature-title">Family-first booking</div>
+        <div class="feature-body">Save family members once, tick their names at every future event. DOB-based auto-categorisation means age tiers update automatically each year without any data entry.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Flexible pricing engine</div>
+        <div class="feature-body">Per-event pricing matrix: Child/Yuva/Adult × Male/Female. Sex-based differential is optional per event. Members can override their suggested tier (e.g. non-working adult choosing Yuva). Free children get no QR — just confirmed entry.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <div class="feature-title">Five user roles</div>
+        <div class="feature-body">Admin, Organiser, Check-in Seva, Registration Seva, Accounts. Every role sees only what it needs — accounts never sees check-in, check-in never sees financials.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">No app install needed</div>
+        <div class="feature-body">Members book on any browser. Check-in volunteers scan QR from their phone camera through the web. No Play Store, no App Store, no updates to manage.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧾</div>
+        <div class="feature-title">Accounts-ready reporting</div>
+        <div class="feature-body">Razorpay transaction IDs per coupon, grouped bookings view for multi-member single payments, year-wise comparison, donation tracking separate from ticket revenue.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📧</div>
+        <div class="feature-title">Delivery on multiple channels</div>
+        <div class="feature-body">QR coupon delivered via email and WhatsApp simultaneously. Downloadable image includes name, age category, venue, booking date, and phone number — ready to screenshot and share.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">9 Indian languages ready</div>
+        <div class="feature-body">Full translation support for Hindi, Marathi, Gujarati, Tamil, Telugu, Kannada, Bengali, and Punjabi — switchable per seeker, stored in their browser preference.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👤</div>
+        <div class="feature-title">Guest booking supported</div>
+        <div class="feature-body">Members can book and pay without creating an account. Their coupons are linked to their phone number and can be retrieved any time by logging in later.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TECH STACK ─────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <span class="eyebrow">Technology</span>
+    <h2 class="section-title">Chosen for reliability, cost, and long-term maintainability</h2>
+    <p class="section-body">Every technology choice was made to keep this system running reliably for a non-profit with zero infrastructure budget and no dedicated IT team.</p>
+
+    <div class="stack-grid">
+      <div class="stack-pill">
+        <div class="stack-icon">⚛️</div>
+        <div class="stack-name">Next.js</div>
+        <div class="stack-role">Frontend</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">🟩</div>
+        <div class="stack-name">Node.js</div>
+        <div class="stack-role">Backend API</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">🐘</div>
+        <div class="stack-name">PostgreSQL</div>
+        <div class="stack-role">Database</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">🔷</div>
+        <div class="stack-name">Supabase</div>
+        <div class="stack-role">DB Hosting</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">▲</div>
+        <div class="stack-name">Vercel</div>
+        <div class="stack-role">Frontend Deploy</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">🖥️</div>
+        <div class="stack-name">Render</div>
+        <div class="stack-role">Backend Deploy</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">💳</div>
+        <div class="stack-name">Razorpay</div>
+        <div class="stack-role">Payments</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">📨</div>
+        <div class="stack-name">MSG91</div>
+        <div class="stack-role">OTP / SMS</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">🎨</div>
+        <div class="stack-name">Tailwind CSS</div>
+        <div class="stack-role">UI Styling</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">📦</div>
+        <div class="stack-name">Express.js</div>
+        <div class="stack-role">REST API</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">🔑</div>
+        <div class="stack-name">JWT</div>
+        <div class="stack-role">Auth</div>
+      </div>
+      <div class="stack-pill">
+        <div class="stack-icon">📱</div>
+        <div class="stack-name">WhatsApp API</div>
+        <div class="stack-role">Delivery</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ROLE MATRIX ────────────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">Access Design</span>
+    <h2 class="section-title">Five roles, each with exactly the access it needs</h2>
+    <p class="section-body">Role-based access was one of the most thoughtfully designed parts of the system — every role sees a completely different interface.</p>
+
+    <div class="role-grid">
+      <div class="role-card admin">
+        <div class="role-name">👑 Super Admin</div>
+        <ul class="role-perms">
+          <li><span class="perm-dot"></span>All organiser capabilities</li>
+          <li><span class="perm-dot"></span>Volunteer directory (profession + seva)</li>
+          <li><span class="perm-dot"></span>User management & password reset</li>
+          <li><span class="perm-dot"></span>Settings: zones & seva options</li>
+          <li><span class="perm-dot"></span>Full accounts access</li>
+        </ul>
+      </div>
+      <div class="role-card organizer">
+        <div class="role-name">🗂️ Organiser</div>
+        <ul class="role-perms">
+          <li><span class="perm-dot"></span>Create, edit, publish programmes</li>
+          <li><span class="perm-dot"></span>Event dashboard & attendee list</li>
+          <li><span class="perm-dot"></span>Discount code management</li>
+          <li><span class="perm-dot"></span>CSV export</li>
+          <li><span class="perm-dot"></span>Check-in scanner access</li>
+        </ul>
+      </div>
+      <div class="role-card seva">
+        <div class="role-name">📷 Check-in Seva</div>
+        <ul class="role-perms">
+          <li><span class="perm-dot"></span>View active programmes only</li>
+          <li><span class="perm-dot"></span>QR scanner on mobile browser</li>
+          <li><span class="perm-dot"></span>Manual lookup by name / phone / email</li>
+          <li><span class="perm-dot"></span>Live check-in count</li>
+          <li><span class="perm-dot"></span>No financial data visible</li>
+        </ul>
+      </div>
+      <div class="role-card accounts">
+        <div class="role-name">📊 Accounts Team</div>
+        <ul class="role-perms">
+          <li><span class="perm-dot"></span>Revenue per programme</li>
+          <li><span class="perm-dot"></span>Donation tracking</li>
+          <li><span class="perm-dot"></span>Razorpay transaction IDs</li>
+          <li><span class="perm-dot"></span>Grouped booking view</li>
+          <li><span class="perm-dot"></span>Year-wise comparison & export</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OUTCOMES ───────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <span class="eyebrow">Results</span>
+    <h2 class="section-title">What changed when the platform went live</h2>
+    <p class="section-body">The platform went from zero to handling a real monthly puja within weeks of completion.</p>
+
+    <div class="outcomes">
+      <div class="outcome-cell">
+        <div class="outcome-num">0</div>
+        <div class="outcome-label">Paper registers<br/>at the gate</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-num">₹0</div>
+        <div class="outcome-label">Monthly infrastructure<br/>running cost</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-num">100%</div>
+        <div class="outcome-label">Payment records<br/>digitally reconcilable</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-num">3s</div>
+        <div class="outcome-label">Average QR<br/>scan to admit</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-num">5</div>
+        <div class="outcome-label">Roles with<br/>tailored dashboards</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-num">∞</div>
+        <div class="outcome-label">Volunteer data<br/>previously uncaptured</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUOTE ──────────────────────────────────────────────────── -->
+<section class="quote-section">
+  <div class="container">
+    <div class="quote-lotus">🙏</div>
+    <blockquote class="quote-text">"What we used to manage across a dozen WhatsApp groups and three Excel sheets now runs on a phone. Our check-in seva simply scans and admits — no paper, no confusion, no missed names."</blockquote>
+    <div class="quote-attr">Sahaja Yoga Programme Coordinator, Pune</div>
+  </div>
+</section>
+
+<!-- ── WHAT THIS SHOWS ────────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">What This Project Demonstrates</span>
+    <h2 class="section-title">Skills shown across this engagement</h2>
+    <p class="section-body">This was a solo engagement from discovery to deployment — every decision from database schema to UI copy was mine.</p>
+
+    <div class="chaos-list" style="margin-top:40px">
+      <div class="chaos-item">
+        <div class="chaos-icon">🧠</div>
+        <div class="chaos-text">
+          <strong>Requirements discovery with non-technical clients</strong>
+          <p>Translated vague organisational needs ("we want it like Eventbrite, but for us") into precise technical specifications through iterative conversation — no formal spec document existed.</p>
+        </div>
+      </div>
+      <div class="chaos-item">
+        <div class="chaos-icon">🏗️</div>
+        <div class="chaos-text">
+          <strong>Full-stack architecture from scratch</strong>
+          <p>Designed the database schema, REST API, authentication system, payment integration, and frontend — all decisions made with long-term maintainability in mind, not just getting it to work.</p>
+        </div>
+      </div>
+      <div class="chaos-item">
+        <div class="chaos-icon">🎯</div>
+        <div class="chaos-text">
+          <strong>Domain-sensitive product thinking</strong>
+          <p>Every feature reflects how Sahaja Yoga events actually work: auspicious donation presets, the child/yuva/adult tier system, family group bookings, seva volunteer tracking, multilingual support.</p>
+        </div>
+      </div>
+      <div class="chaos-item">
+        <div class="chaos-icon">⚡</div>
+        <div class="chaos-text">
+          <strong>Iterative delivery under real constraints</strong>
+          <p>Built and shipped in phases, incorporating feedback after each one. Worked within a ₹0 infrastructure budget while delivering production-quality reliability using modern free tiers strategically.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <h2 class="cta-title">Need something built for your organisation?</h2>
+  <p class="cta-sub">I build full-stack web applications — from idea to deployment.</p>
+  <a href="mailto:abhimanyu.naikare@gmail.com" class="cta-btn">
+    🪷 Get in touch
+  </a>
+  <div class="cta-tags">
+    <span class="cta-tag">Full-stack development</span>
+    <span class="cta-tag">Payment integration</span>
+    <span class="cta-tag">Custom admin systems</span>
+    <span class="cta-tag">Mobile-first design</span>
+  </div>
+</section>
+
+<footer>
+  Built with care by <span>Abhimanyu Naikare</span> · Full-stack Developer
+</footer>
+
+</body>
+</html>
