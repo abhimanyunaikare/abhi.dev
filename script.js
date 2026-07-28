@@ -102,6 +102,40 @@ if (processTimeline && window.gsap && window.ScrollTrigger) {
   if (processLineFill) processLineFill.style.height = '100%';
 }
 
+// ---------- Persistent scroll watermark ----------
+// Fades in once the marquee has scrolled past, stays put through
+// services/work/process/testimonials, and dissolves before About.
+const scrollWatermark = document.getElementById('scrollWatermarkWrap');
+const marqueeSection = document.getElementById('marquee');
+const aboutSection = document.getElementById('about');
+
+if (scrollWatermark && marqueeSection && aboutSection && window.gsap && window.ScrollTrigger) {
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: marqueeSection,
+      start: 'bottom 85%',
+      endTrigger: aboutSection,
+      end: 'top 45%',
+      scrub: 0.6,
+    },
+  })
+    .fromTo(scrollWatermark, { opacity: 0 }, { opacity: 0.16, duration: 0.15, ease: 'none' })
+    .to(scrollWatermark, { opacity: 0.16, duration: 0.7, ease: 'none' })
+    .to(scrollWatermark, { opacity: 0, duration: 0.15, ease: 'none' });
+
+  // Slow independent drift so it feels alive rather than a static sticker
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.to(scrollWatermark, {
+      rotation: 4,
+      scale: 1.05,
+      duration: 14,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+    });
+  }
+}
+
 // ---------- Magnetic buttons ----------
 document.querySelectorAll('.magnetic-btn').forEach((btn) => {
   btn.addEventListener('mousemove', (e) => {
@@ -139,14 +173,45 @@ if (cursorDot && window.matchMedia('(pointer: fine)').matches) {
 // ---------- Contact form ----------
 // Wire this up to Formspree (free tier) or a Vercel serverless API route.
 // Formspree quick-start: replace YOUR_FORM_ID below after creating a free form at https://formspree.io
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xbdnwyry';
 
 const form = document.getElementById('contactForm');
 const status = document.getElementById('formStatus');
+const sendBtn = document.getElementById('sendBtn');
+const sendSuccess = document.getElementById('sendSuccess');
+const sendAnotherBtn = document.getElementById('sendAnotherBtn');
+
+// Restart a CSS animation reliably by toggling its class with a forced reflow
+// in between — just removing/re-adding a class won't replay a "forwards"
+// animation on its own.
+function replayAnimation(el, className) {
+  if (!el) return;
+  el.classList.remove(className);
+  void el.offsetWidth; // force reflow
+  el.classList.add(className);
+}
+
+function showSendSuccess() {
+  if (sendSuccess) replayAnimation(sendSuccess, 'is-active');
+}
+
+function hideSendSuccess() {
+  if (sendSuccess) sendSuccess.classList.remove('is-active');
+}
+
+if (sendAnotherBtn) {
+  sendAnotherBtn.addEventListener('click', () => {
+    hideSendSuccess();
+    if (sendBtn) sendBtn.classList.remove('is-launching');
+    status.textContent = '';
+  });
+}
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   status.textContent = 'Sending...';
+  hideSendSuccess();
+  if (sendBtn) replayAnimation(sendBtn, 'is-launching'); // fire the rocket immediately
   const data = new FormData(form);
 
   try {
@@ -156,12 +221,16 @@ form.addEventListener('submit', async (e) => {
       headers: { Accept: 'application/json' },
     });
     if (res.ok) {
-      status.textContent = "Thanks — I'll get back to you within a business day.";
+      status.textContent = '';
       form.reset();
+      // Let the rocket clear the button before the success card takes over.
+      setTimeout(showSendSuccess, 550);
     } else {
+      if (sendBtn) sendBtn.classList.remove('is-launching');
       status.textContent = 'Something went wrong. Please email me directly instead.';
     }
   } catch (err) {
+    if (sendBtn) sendBtn.classList.remove('is-launching');
     status.textContent = 'Network error — please email me directly instead.';
   }
 });
